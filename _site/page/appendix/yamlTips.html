@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  <!-- Page title set in pageTitle directive -->
+  <title page-title>Turbonomic Actions</title>
+  
+  
+  <link href="http://localhost:4000/css/FourD_CSS/vmtHelp.css" rel="stylesheet" type="text/css"/>
+  
+  
+  <body>
+    
+    <div id="angularThing" ng-controller="TopicCtrl as mainCtrl">
+      <nav class='banner'>
+        <div class="bannerbar" >
+          
+          
+          <img src="/assets/logos/logoInv.png" id="logo_image" style="width: 80%; max-width: 100px;"/>
+          
+          <div class="titleHead">
+            <h4 class="revision"><font color="white">Turbonomic Actions</span></font></h4>
+          </div>
+        </div>
+      </nav>
+      
+      
+      <div id="topicDiv">
+        <article id ='topicArt' class="topic">
+          <h1>YAML File Editing Tips</h1>
+          <!--
+          <div style="font-size: 10px;">
+            <p>site.github.baseurl is: /pages/turbonomic/snow-doc</p>
+            
+            
+            
+            <p>CSS LINK IS: http://localhost:4000/css/FourD_CSS/vmtHelp.css</p>
+            
+            
+            
+            <p>LOGO LINK IS: /assets/logos/logoInv.png</p>
+            
+            
+            
+            
+            <p>DOC HOME LINK: http://localhost:4000/index.html</p>
+            
+            
+            <p>REPOS URL IS: https://github.com/turbonomic/snow-doc</p>
+          </div>
+          -->
+          <p>To configure an external TimescaleDB, you will edit the Turbonomic 
+cr.yaml file. When editing yaml files, you must be careful to respect the file syntax, 
+including indents in the file.  General rules for edits include:</p>
+
+<ul>
+  <li>Always uses spaces, not tabs, for all indentation. If your editor of
+ choice makes this difficult, you can use the linux <code class="language-plaintext highlighter-rouge">expand</code> utility
+ when you’re done, to convert tabs to equivalent spaces.</li>
+  <li>Be careful to keep the same indentation for all properties in a given
+section.</li>
+  <li>Never use the same property name twice in the same section. Doing this
+will render the YAML file invalid, though in all likelihood you will not
+see any notification of a problem. Rather, all but one of the property
+definitions will be silently ignored. 
+​
+In this documentation we refer to specific properties in the CR file using a “path” expression. 
+For example, assume the path <code class="language-plaintext highlighter-rouge">/spec/global/repository</code> to designate a <code class="language-plaintext highlighter-rouge">repository</code> property in the 
+file.  You can find property in the file as follows:
+​
+    <ol>
+      <li>Find a line that says <code class="language-plaintext highlighter-rouge">spec:</code> with no indentation at all.</li>
+      <li>Between that line and the next unindented line (not counting comments, which start with <code class="language-plaintext highlighter-rouge">#</code>),
+find a line that says <code class="language-plaintext highlighter-rouge">global:</code> and is at the next level of indentation.</li>
+      <li>Between that line and the next line with the same indentation, find a line that starts with
+<code class="language-plaintext highlighter-rouge">repository:</code>. That line is where the addressed property is defined.</li>
+    </ol>
+  </li>
+</ul>
+
+<h3 id="example">Example:</h3>
+<p>In this example, find the <code class="language-plaintext highlighter-rouge">repository</code> property specified by <code class="language-plaintext highlighter-rouge">/spec/global/repository</code>:</p>
+<pre>
+apiVersion: charts.helm.k8s.io/v1alpha1
+kind: Xl
+metadata:
+  name: xl-release
+<i>spec:</i>
+  properties:
+    global:
+      repository:        # This is NOT the correct property
+        ...
+      
+  # Global settings
+  <i>global:</i>
+    <i>repository:</i>          # This is the one we're after
+</pre>
+<p>The first <code class="language-plaintext highlighter-rouge">repository</code> property is not at <code class="language-plaintext highlighter-rouge">/spec/global/repository</code>, but at 
+<code class="language-plaintext highlighter-rouge">/spec/properties/global/repository</code>. 
+​</p>
+
+          
+        </article>
+      </div>
+      </section>
+      
+      <div id="navList">
+        
+        <span>
+          <div id="toc">
+            
+            <article class="navList" style="top:10px;">
+              <div id="tocresult" tabIdex="-1" >
+                <ul>
+                  
+                  
+                  <h5><a href="http://localhost:4000/index.html">DOCUMENTATION HOME</a></h5>
+                  
+                  
+                  <h5 style="margin-bottom:1px;">Turbonomic Actions Technical Details</h5>
+                    <ul>
+                    
+                        
+                        <li><a href="http://localhost:4000/page/TechDetails/overview.html">Overview</a></li>
+                        
+                        <ul>
+                          
+                          
+                          
+                        </ul>
+                    
+                    </ul>
+                  
+                </ul>
+              </div>
+            </article>
+          </div>
+        </span>
+      </div>
+    </div>
+    
+  </body>
+  
+</html>

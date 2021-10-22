@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  <!-- Page title set in pageTitle directive -->
+  <title page-title>Turbonomic Actions</title>
+  
+  
+  <link href="http://localhost:4000/css/FourD_CSS/vmtHelp.css" rel="stylesheet" type="text/css"/>
+  
+  
+  <body>
+    
+    <div id="angularThing" ng-controller="TopicCtrl as mainCtrl">
+      <nav class='banner'>
+        <div class="bannerbar" >
+          
+          
+          <img src="/assets/logos/logoInv.png" id="logo_image" style="width: 80%; max-width: 100px;"/>
+          
+          <div class="titleHead">
+            <h4 class="revision"><font color="white">Turbonomic Actions</span></font></h4>
+          </div>
+        </div>
+      </nav>
+      
+      
+      <div id="topicDiv">
+        <article id ='topicArt' class="topic">
+          <h1>Configuring an External TimescaleDB</h1>
+          <!--
+          <div style="font-size: 10px;">
+            <p>site.github.baseurl is: /pages/turbonomic/snow-doc</p>
+            
+            
+            
+            <p>CSS LINK IS: http://localhost:4000/css/FourD_CSS/vmtHelp.css</p>
+            
+            
+            
+            <p>LOGO LINK IS: /assets/logos/logoInv.png</p>
+            
+            
+            
+            
+            <p>DOC HOME LINK: http://localhost:4000/index.html</p>
+            
+            
+            <p>REPOS URL IS: https://github.com/turbonomic/snow-doc</p>
+          </div>
+          -->
+          <p>Beginning with Turbonomic 8.1.4, you can configure 
+External Reports to use an external deployment of TimescaleDB. To enable an 
+external deployment, you will:</p>
+
+<ul>
+  <li>Deploy or access the external TimescaleDB instance that you will use<br />
+This is a PostgreSQL server with the TimescaleDB extension. The DB server 
+must be deployed in a way that is accessible to your installation of Turbonomic.
+It can be deployed on the cloud or in an on-prem VM. 
+The Embedded Reports feature currently supports PostgreSQL 12.x and TimescaleDB 2.0.1.<br />
+For more information, see:
+    <ul>
+      <li><a href="external-timescale-dbService.html">Creating an External TimescaleDB</a></li>
+      <li>See the article, <a href="https://docs.timescale.com/v2.0/getting-started/installation">https://docs.timescale.com/v2.0/getting-started/installation</a></li>
+    </ul>
+  </li>
+  <li>Provision users, databases, and schemas on the TimescaleDB instance<br />
+To provision these database objects you can manually provision or 
+enable Turbonomic to automatically provision.<br />
+For more information, see:
+    <ul>
+      <li><a href="external-timescale-manuallyAdd.html">Manual Provisioning of Users and Databases</a></li>
+      <li><a href="external-timescale-autoProvision.html">Automatic Provisioning of Users and Databases</a></li>
+    </ul>
+  </li>
+  <li>
+    <p>Edit properties in the Turbonomic cr.yaml file.<br />
+Note that the location of the cr.yaml file is different, depending on whether you 
+are configuring an OVA installation or a Kubernetes Node installation of 
+Turbonomic.</p>
+  </li>
+  <li>
+    <p>Optionally, enable secure connections between Turbonomic and the Timescale DB instance<br />
+For information about enabling TLS/SSL for database connections, see the PostgreSQL 
+documentation <a href="https://www.postgresql.org/docs/12/ssl-tcp.html">here</a>.</p>
+
+    <p>We have verified that the steps tp to create a self-signed certificate, as outlined in that document, 
+produce a server that functions properly with all components of Embedded Reporting. However, we 
+do not recommend using self-signed certificates in production instances.</p>
+  </li>
+</ul>
+
+<p>To configure External Reports to use an external deployment of TimescaleDB, you 
+must edit the Turbonomic cr.yaml file. For tips about editing yaml files, 
+see <a href="../appendix/yamlTips.html">YAML File Editing Tips</a>.</p>
+
+<p>​</p>
+
+          
+        </article>
+      </div>
+      </section>
+      
+      <div id="navList">
+        
+        <span>
+          <div id="toc">
+            
+            <article class="navList" style="top:10px;">
+              <div id="tocresult" tabIdex="-1" >
+                <ul>
+                  
+                  
+                  <h5><a href="http://localhost:4000/index.html">DOCUMENTATION HOME</a></h5>
+                  
+                  
+                  <h5 style="margin-bottom:1px;">Turbonomic Actions Technical Details</h5>
+                    <ul>
+                    
+                        
+                        <li><a href="http://localhost:4000/page/TechDetails/overview.html">Overview</a></li>
+                        
+                        <ul>
+                          
+                          
+                          
+                        </ul>
+                    
+                    </ul>
+                  
+                </ul>
+              </div>
+            </article>
+          </div>
+        </span>
+      </div>
+    </div>
+    
+  </body>
+  
+</html>

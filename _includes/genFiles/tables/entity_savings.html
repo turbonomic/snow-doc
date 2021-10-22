@@ -1,0 +1,67 @@
+<html><body>
+  
+  <table><tbody><tr><th>Data Object</th><th>Type</th><th>Nullable</th><th>Primary</th><th>Description</th><th>Reference</th></tr>
+    <tr><td>time</td>
+      <td>
+        <p>timestamp with time zone</p>
+      </td>
+      <td>
+        <p>False</p>
+      </td>
+      <td>
+        <p>True</p>
+      </td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr><td>entity_oid</td>
+      <td>
+        <p>bigint</p>
+      </td>
+      <td>
+        <p>False</p>
+      </td>
+      <td>
+        <p>True</p>
+      </td>
+      <td>
+        <p>The object ID for the entity that has seen a saving or investment.</p>
+      </td>
+      <td></td>
+    </tr>
+    <tr><td>savings_type</td>
+      <td>
+        <p>enum</p>
+      </td>
+      <td>
+        <p>False</p>
+      </td>
+      <td>
+        <p>True</p>
+      </td>
+      <td>
+        <p>Whether the action resulted in an investment or saving, and whether the action executed or not.</p>
+      </td>
+      <td>
+        <p>
+          <a href="../enums/savings_type.html">savings_type</a>
+        </p>
+      </td>
+    </tr>
+    <tr><td>stats_value</td>
+      <td>
+        <p>real</p>
+      </td>
+      <td>
+        <p>False</p>
+      </td>
+      <td>
+        <p>False</p>
+      </td>
+      <td>
+        <p>The value of the investment or saving for the related action.</p>
+      </td>
+      <td></td>
+    </tr>
+  </tbody></table>
+</body></html>

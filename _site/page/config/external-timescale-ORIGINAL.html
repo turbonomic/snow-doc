@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  <!-- Page title set in pageTitle directive -->
+  <title page-title>Turbonomic Actions</title>
+  
+  
+  <link href="http://localhost:4000/css/FourD_CSS/vmtHelp.css" rel="stylesheet" type="text/css"/>
+  
+  
+  <body>
+    
+    <div id="angularThing" ng-controller="TopicCtrl as mainCtrl">
+      <nav class='banner'>
+        <div class="bannerbar" >
+          
+          
+          <img src="/assets/logos/logoInv.png" id="logo_image" style="width: 80%; max-width: 100px;"/>
+          
+          <div class="titleHead">
+            <h4 class="revision"><font color="white">Turbonomic Actions</span></font></h4>
+          </div>
+        </div>
+      </nav>
+      
+      
+      <div id="topicDiv">
+        <article id ='topicArt' class="topic">
+          <h1>Using an External Timescale Database with Embedded Reporting</h1>
+          <!--
+          <div style="font-size: 10px;">
+            <p>site.github.baseurl is: /pages/turbonomic/snow-doc</p>
+            
+            
+            
+            <p>CSS LINK IS: http://localhost:4000/css/FourD_CSS/vmtHelp.css</p>
+            
+            
+            
+            <p>LOGO LINK IS: /assets/logos/logoInv.png</p>
+            
+            
+            
+            
+            <p>DOC HOME LINK: http://localhost:4000/index.html</p>
+            
+            
+            <p>REPOS URL IS: https://github.com/turbonomic/snow-doc</p>
+          </div>
+          -->
+          <p>The features described here are supported beginning in Turbonomic v8.1.4.</p>
+
+<p>If you wish to manage the TimescaleDB database server that will house data for
+Turbonomic’s Embedded Reporting feature, you can do so fairly easily, by editing
+a few of the properties in your CR (Custom Resources) file. This file will be
+located at <code class="language-plaintext highlighter-rouge">~/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml</code>.
+​</p>
+<h3 id="a-bit-about-yaml-files">A Bit About YAML Files</h3>
+<p>​</p>
+<blockquote>
+  <p>Note: There are a few rules you must bear in mind whenever editing a YAML
+file such as this one:</p>
+  <ul>
+    <li>Always uses spaces, not tabs, for all indentation. If your editor of
+choice makes this difficult, you can use the linux <code class="language-plaintext highlighter-rouge">expand</code> utility
+when you’re done, to convert tabs to equivalent spaces.</li>
+    <li>Be careful to keep the same indentation for all properties in a given
+section.</li>
+    <li>Never use the same property name twice in the same section. Doing this
+will render the YAML file invalid, though in all likelihood you will not
+see any notification of a problem. Rather, all but one of the property
+definitions will be silently ignored. 
+​
+In this document we will refer to specific properties in the CR file using a “path” like 
+<code class="language-plaintext highlighter-rouge">/spec/global/repository</code>. This means the property you find as follows:
+​
+      <ol>
+        <li>Find a line that says <code class="language-plaintext highlighter-rouge">spec:</code> with no indentation at all.</li>
+        <li>Between that line and the next unindented line (not counting comments, which start with <code class="language-plaintext highlighter-rouge">#</code>),
+ find a line that says <code class="language-plaintext highlighter-rouge">global:</code> and is at the next level of indentation.</li>
+        <li>Between that line and the next line with the same indentation, find a line that starts with
+ <code class="language-plaintext highlighter-rouge">repository:</code>. That line is where the addressed property is defined.</li>
+      </ol>
+    </li>
+  </ul>
+</blockquote>
+
+<p>Here’s an example, where we’re looking for the property at <code class="language-plaintext highlighter-rouge">/spec/global/repository</code>:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apiVersion: charts.helm.k8s.io/v1alpha1
+kind: Xl
+metadata:
+  name: xl-release
+spec:
+  properties:
+    global:
+      repository:               # This is NOT the correct property
+        ...
+      
+  # Global settings
+  global:
+    repository:                 # This is the one we're after
+</code></pre></div></div>
+<p>The first <code class="language-plaintext highlighter-rouge">repository</code> property is not at <code class="language-plaintext highlighter-rouge">/spec/global/repository</code>, but at 
+<code class="language-plaintext highlighter-rouge">/spec/properties/global/repository</code>. Step 2 doesn’t apply because the <code class="language-plaintext highlighter-rouge">global:</code> line is not
+at the <em>next</em> level of indentation, but the one after that. It is easy to get such cases confused 
+while editing YAML.
+​</p>
+<h2 id="basic-scenario---nothing-provisioned">Basic Scenario - Nothing Provisioned</h2>
+<p>​
+In the most basic scenario of an external server, a PostgreSQL server with the TimescaleDB
+extension is provisioned somewhere in the cloud or in an on-prem VM, but no databases or users are
+provisioned for use by Turbonomic. We currently support version 12.x and TimescaleDB 2.0.1.
+Documentation regarding basic installation can be found 
+<a href="https://docs.timescale.com/v2.0/getting-started/installation">here</a>
+​
+The IP address or host name of the provisioned server can be configured in the CR file at
+<code class="language-plaintext highlighter-rouge">/spec/global/externalTimescaleDBIP</code>, as in:
+​</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>...
+spec:
+  ...
+  global:
+    ...
+    externalTimescaleDBIP: &lt;host-or-IP&gt;
+</code></pre></div></div>
+<p>(Here we have included ellipses -<code class="language-plaintext highlighter-rouge">...</code>- to illustrate that other lines may appear; we will omit
+these in later illustrations.)
+​
+​
+The value of this property should be either the fully-qualified domain name of the external server 
+or its IP address, replacing the placeholder shown above including angle brackets.
+​
+In this scenario, upon initial startup of the appliance, needed databases and logins will be 
+provisioned, using a root (super-user) connection for such operations. By default, we will use
+the <code class="language-plaintext highlighter-rouge">postgres</code> login, and a password that can you can obtain from your sales or field representative.
+If you wish to define your own values, you can configure them in the 
+<code class="language-plaintext highlighter-rouge">/spec/properties/global/dbs/postgresDefault</code> property block as follows:
+​</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spec:
+  properties:
+    global:
+      dbs:
+        postgresDefault:
+          rootUserName: &lt;root-user&gt;
+          rootPassword: &lt;root-password&gt;  
+</code></pre></div></div>
+<p>​</p>
+<h2 id="pre-provisioned-databases-and-logins">Pre-Provisioned Databases and Logins</h2>
+<p>​
+In the second scenario, rather than having Turbonomic perform provisioning operations, you take
+care of provisioning yourself. You will not need to configure root credentials for Turbonomic, and
+you will have the option of choosing your own names for databases, schemas, and logins. If
+provisioning is incomplete or incorrect, or if incorrect property values are configured, Turbonomic
+will be unable to collect data for Embedded Reporting and/or display reports.
+​
+Here are the full set of properties that configure required names and passwords. Each is shown with
+the default that will be assumed if that particular property is left out, so if you’re happy with
+those choices you can leave them out. (You will still be responsible for provisioning those objects).
+​
+These properties are spread among the <code class="language-plaintext highlighter-rouge">/spec/properties/global/dbs</code>, <code class="language-plaintext highlighter-rouge">/spec/properties/extractor/dbs</code>
+and <code class="language-plaintext highlighter-rouge">/spec/grafana/grafana.ini/database</code> blocks:
+​</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spec:
+  properties:
+    global:
+      dbs:
+        extractor:
+          databaseName: extractor
+          schemaName: extractor
+          query:
+            userName: query
+            password: &lt;defaault-password&gt;
+    extractor:
+      dbs:
+        extractor:        
+          userName: extractor
+          password: &lt;default-password&gt;
+        grafana:
+          scehamName: grafana
+  grafana:
+    grafana.ini:
+      database:
+        name: grafana
+        user: grafana_backend
+        password: &lt;default-password&gt;
+</code></pre></div></div>
+<p>​
+A few points on why this structure appears as it does:
+​</p>
+<ul>
+  <li>The <code class="language-plaintext highlighter-rouge">/spec/properties/global</code> block contains properties that will be visible to all Turbonomic
+components. Here we have names and password associated with a read-only login to a database owned
+by the <code class="language-plaintext highlighter-rouge">extractor</code> component. This login will be used by both the <code class="language-plaintext highlighter-rouge">extractor</code> and the <code class="language-plaintext highlighter-rouge">api</code>
+component, so rather than configure it for those two components specifically (and risk that they
+are not in agreement), we have placed them among global properties.</li>
+  <li>Properties for the <code class="language-plaintext highlighter-rouge">extractor</code> database appear in a properties block that is referred to within
+the <code class="language-plaintext highlighter-rouge">extractor</code> component by the name <code class="language-plaintext highlighter-rouge">"dbs.extractor"</code>. Similarly, the internal name used for the
+<code class="language-plaintext highlighter-rouge">query</code> login to the same database is <code class="language-plaintext highlighter-rouge">"dbs.extractor.qeury"</code>. The common prefix means that the
+<code class="language-plaintext highlighter-rouge">databaseName</code> and <code class="language-plaintext highlighter-rouge">schemaName</code> properties will be visible and identical for these two logins.</li>
+  <li>There’s another database used by the <code class="language-plaintext highlighter-rouge">grafana</code> component, but provisioning responsibility for that
+database falls to the <code class="language-plaintext highlighter-rouge">extractor</code> component as well, so its properties could be specified in the
+<code class="language-plaintext highlighter-rouge">/spec/properties/extractor/dbs/grafana</code> block. However, we only specify <code class="language-plaintext highlighter-rouge">schemaName</code> above. 
+The reason is that we must also provide these values to the <code class="language-plaintext highlighter-rouge">grafana</code> component via property names
+that are determined Grafana, not by us. We provide automatic copying of the database and login 
+names and the login password from the <code class="language-plaintext highlighter-rouge">/spec/grafna/grafana.ini</code> block to the 
+<code class="language-plaintext highlighter-rouge">/spec/properties/extractor/dbs/grafana</code> block, so they need (should) not be specified there.</li>
+  <li>The grafana configuration has property to specify a schema name, so if you want to choose that
+you’ll want to configure it in the <code class="language-plaintext highlighter-rouge">/spec/properties/extractor/dbs/grafana</code> block as shown above.
+The <code class="language-plaintext highlighter-rouge">grafana</code> component will not include a schema name in any of the SQL that it sends to the
+database, so as long as the grafana login’s “search path” is set properly, everything will work.</li>
+</ul>
+
+<h3 id="other-recommended-settings">Other Recommended Settings</h3>
+<p>​
+In addition to the above settings, the following are recommended but not required:
+​</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spec:
+  properties:
+    global:
+      dbs:
+        postgresDefault:
+            shouldProvisionDatabase: false
+            shouldProvisionUser: false
+            destructiveProvisioningEnabled: false
+</code></pre></div></div>
+<p>​
+Placing these settings in the <code class="language-plaintext highlighter-rouge">/spec/properties/global/dbs/postgresDefault</code> block ensures that
+they will apply to all PostgreSQL databases and users used by any Turbonomic component. If your
+pre-provisioning is more selective than that, you can move the settings to more narrowly targeted
+property blocks like <code class="language-plaintext highlighter-rouge">/spec/properties/extractor/dbs/grafana</code> or 
+<code class="language-plaintext highlighter-rouge">/spec/properties/global/dbs/extractor</code>.
+​
+These properties have the following meanings:
+​</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">shouldProvisionDatabase</code>: Determines whether Turbonomic will attempt to provision any database
+in scope of the definition. This is <code class="language-plaintext highlighter-rouge">true</code> by default for the Embedded Reporting databases
+in order to support the default behavior of provisioning all databases and users during initial
+startup.</li>
+  <li><code class="language-plaintext highlighter-rouge">shouldProvisionUser</code>: Determines whether Turbonomic will attempt to provision any logins in
+scope of the definition. This is <code class="language-plaintext highlighter-rouge">true</code> by default for Embedded Reporting logins in order to
+support the default behavior of provisioning all databases and users during initial startup.</li>
+  <li><code class="language-plaintext highlighter-rouge">destructiveProvisioningEnabled</code>: Determines whether, during its provisioning operations,
+Turbonomic will be allowed to perform destructive operations like dropping databases, schemas
+or users that are found to be mis-configured.  In the default installation scenario, the
+<code class="language-plaintext highlighter-rouge">public</code> schema that is created by PostgreSQL in any new database is dropped, to reduce the
+complexity of the overall model. Because this is considered a destructive operation, this option
+is <code class="language-plaintext highlighter-rouge">true</code> by default.
+​
+    <h3 id="provisioning-requirements">Provisioning Requirements</h3>
+    <p>​
+The following operations will properly provision all database objects required by Embedded Reporting,
+should you choose to take responsibility for that. We use the default names here for illustration;
+please substitute your preferred names, matching what you have configured in your CR file.</p>
+  </li>
+</ul>
+
+<p>N.B.: With one exception, all operartions should be performed using a super-user login (usually
+<code class="language-plaintext highlighter-rouge">postgres</code>). Where a group of operations requires being logged into a particular database, or with
+a particular non-superuser login, such requirements are specified prior to the operation commands.
+​</p>
+<ul>
+  <li>Create databases - one for <code class="language-plaintext highlighter-rouge">extractor</code> data, one for <code class="language-plaintext highlighter-rouge">grafana</code> data:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE DATABASE extractor;
+CREATE DATABASE grafana;
+</code></pre></div>    </div>
+  </li>
+  <li>Create database users:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-- main read/write user for extractor data
+CREATE USER extractor PASSWORD '&lt;password&gt;';
+-- group for users with read-only access to extractor data
+CREATE ROLE readers_extractor_extractor;
+-- read-only user for extractor data as a member of that group
+CREATE USER query PASSWORD '&lt;password&gt;';
+GRANT CONNECT ON DATABASE extractor TO readers_extractor_extractor;
+GRANT readers_extractor_extractor TO query;
+-- read-write user for grafana data
+CREATE USER grafana_backend PASSWORD '&lt;password&gt;';
+</code></pre></div>    </div>
+  </li>
+  <li>Create and prepare the schema for extractor data - must be you connected to extractor database
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE SCHEMA extractor;
+-- read/write user has full access
+GRANT ALL PRIVILEGES ON SCHEMA extractor TO extractor;
+-- all users in readers group have read-only access
+GRANT USAGE on SCHEMA extractor TO readers_extractor_extractor;
+GRANT SELECT ON ALL TABLES IN SCHEMA extractor TO readers_extractor_extractor;
+-- make the extractor and query users use the extractor schema by default
+ALTER ROLE extractor SET search_path TO 'extractor';
+ALTER ROLE query SET search_path TO 'extractor';
+-- install the timescaledb plugin into the extractor database using the extractor schema
+CREATE EXTENSION timescaledb SCHEMA extractor;
+</code></pre></div>    </div>
+  </li>
+  <li>Ensure that readers get access to any tables added in the future - you must be <em>logged in</em> using
+the main extractor user (<em>not</em> a superuser) and connected to the extractor database for this step
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER DEFAULT PRIVILEGES IN SCHEMA extractor GRANT SELECT ON TABLES TO readers_extractor_extractor;
+</code></pre></div>    </div>
+  </li>
+  <li>Create and prepare the schema for grafana data - you must be connected to grafana database
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE SCHEMA grafana;
+-- read/write user has full access
+GRANT ALL PRIVILEGES ON SCHEMA grafana TO grafana_backend;
+-- make sure the grafana user uses the grafana schema by default
+ALTER ROLE grafana_backend SET search_path TO 'grafana';
+</code></pre></div>    </div>
+    <p>​</p>
+    <h2 id="enabling-secure-connections">Enabling Secure Connections</h2>
+    <p>​
+Customers who wish to enable TLS/SSL for their database connections are referred ot the PostgreSQL
+documentation <a href="https://www.postgresql.org/docs/12/ssl-tcp.html">here</a>.
+​
+We have verified that the steps outlined in that document to create a self-signed certificate
+produce a server that functions properly with all components of Embedded Reporting. Of course, we
+do not recommend that customers use self-signed certificates in production instances.
+​
+In addition to configuring postgres, customers who require SSL should make
+the following addition in their CR file, adding a setting for <code class="language-plaintext highlighter-rouge">ssl_mode</code> at 
+<code class="language-plaintext highlighter-rouge">/spec/grafana/grafana.ini/database</code>:</p>
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spec:
+grafana:
+  grafana.ini:
+    ssl_mode: required
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+          
+        </article>
+      </div>
+      </section>
+      
+      <div id="navList">
+        
+        <span>
+          <div id="toc">
+            
+            <article class="navList" style="top:10px;">
+              <div id="tocresult" tabIdex="-1" >
+                <ul>
+                  
+                  
+                  <h5><a href="http://localhost:4000/index.html">DOCUMENTATION HOME</a></h5>
+                  
+                  
+                  <h5 style="margin-bottom:1px;">Turbonomic Actions Technical Details</h5>
+                    <ul>
+                    
+                        
+                        <li><a href="http://localhost:4000/page/TechDetails/overview.html">Overview</a></li>
+                        
+                        <ul>
+                          
+                          
+                          
+                        </ul>
+                    
+                    </ul>
+                  
+                </ul>
+              </div>
+            </article>
+          </div>
+        </span>
+      </div>
+    </div>
+    
+  </body>
+  
+</html>
