@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  <!-- Page title set in pageTitle directive -->
+  <title page-title>Turbonomic Actions</title>
+  
+  
+  <link href="http://localhost:4000/css/FourD_CSS/vmtHelp.css" rel="stylesheet" type="text/css"/>
+  
+  
+  <body>
+    
+    <div id="angularThing" ng-controller="TopicCtrl as mainCtrl">
+      <nav class='banner'>
+        <div class="bannerbar" >
+          
+          
+          <img src="/assets/logos/logoInv.png" id="logo_image" style="width: 80%; max-width: 100px;"/>
+          
+          <div class="titleHead">
+            <h4 class="revision"><font color="white">Turbonomic Actions</span></font></h4>
+          </div>
+        </div>
+      </nav>
+      
+      
+      <div id="topicDiv">
+        <article id ='topicArt' class="topic">
+          <h1>REST API</h1>
+          <!--
+          <div style="font-size: 10px;">
+            <p>site.github.baseurl is: /pages/turbonomic/snow-doc</p>
+            
+            
+            
+            <p>CSS LINK IS: http://localhost:4000/css/FourD_CSS/vmtHelp.css</p>
+            
+            
+            
+            <p>LOGO LINK IS: /assets/logos/logoInv.png</p>
+            
+            
+            
+            
+            <p>DOC HOME LINK: http://localhost:4000/index.html</p>
+            
+            
+            <p>REPOS URL IS: https://github.com/turbonomic/snow-doc</p>
+          </div>
+          -->
+          <p>To communicate with the Turbonomic Actions application from an 
+external application, use the Turbonomic Actions REST API. 
+You can execute these operations:</p>
+
+<ul>
+  <li>
+    <p>Create Action Records (POST)</p>
+  </li>
+  <li>
+    <p>Create Action Approvals (POST)</p>
+  </li>
+  <li>
+    <p>Update Action Approvals (POST)</p>
+  </li>
+  <li>
+    <p>Search Action Approvals (PUT)</p>
+  </li>
+</ul>
+
+<p>Note that API request payloads and the API responses are in jSON format.</p>
+
+<h2 id="create-action-records">Create Action Records</h2>
+
+<p>Adds new entries into the Turbonomic Actions records table. Use this for 
+Turbonomic actions that have been recommended or have already been executed.</p>
+
+<p><strong>API Request:</strong></p>
+
+<p><code class="language-plaintext highlighter-rouge">POST /api/x_turbo_turbonomic/v1/action/records</code></p>
+
+<p><strong>Sample Body:</strong></p>
+
+<pre>
+{
+    "turbonomicInstance": 
+    {
+        "hostOrIP": "10.10.200.80",
+        "status": "ONLINE",
+        "version": "6.4.0-SNAPSHOT"
+    },
+    "actionRecords": [
+        {
+            "actionOid": "A1234567890",
+            "details": "Hyper-V VM 1 Right Size Action Details",
+            "targetEntity": 
+            {
+                "uuid": "vm-345",
+                "name": "ACM-Hyper-V-VM-1",
+                "type": "VIRTUAL_MACHINE",
+                "targetName": "10.10.172.10",
+                "targetIP": "10.10.172.10",
+                "targetType": "hyper-v"
+            },
+            "actionLifeCycleEvent": "On Generation"
+            … // Extra fields removed
+
+        },
+  	 {
+            "actionOid": "B1234567890",
+            "details": "vCenter VM 2 Right Size Action Details",
+            "targetEntity": 
+            {
+                "uuid": "vm-367",
+                "name": "ACM-L-Tomcat-VM-2",
+                "type": "VIRTUAL_MACHINE",
+                "targetName": "10.10.172.25",
+                "targetIP": "10.10.172.25",
+                "targetType": "vCenter"
+            },
+            "actionLifeCycleEvent": "On Generation"
+            … // Extra fields removed
+        }
+    ]
+}
+</pre>
+
+<p><strong>Sample Response:</strong></p>
+
+<pre>
+{
+    "result": {
+        "succeeded": [
+            {
+                "oid": "A1234567890"
+            },
+            {
+                "oid": "B1234567890"
+            }
+        ],
+        "failed": []
+    }
+}
+</pre>
+
+<h2 id="create-action-approvals">Create Action Approvals</h2>
+
+<p>Create Turbonomic action approval records in ServiceNow for each 
+Turbonomic that requires approval. By default, this creates 
+a corresponding CR.</p>
+
+<p><strong>API Request:</strong></p>
+
+<p><code class="language-plaintext highlighter-rouge">POST /api/x_turbo_turbonomic/v1/action/approvals</code></p>
+
+<p><strong>Sample Body:</strong></p>
+
+<pre>
+{
+    "turbonomicInstance": 
+    {
+        "hostOrIP": "10.10.200.80",
+        "status": "ONLINE",
+        "version": "6.4.0-SNAPSHOT"
+    },
+    "actionApprovals": [
+        {
+            "oid": "A1234567890",
+            "description": "vCenter VM 1 Right Size Action Description",
+            "category": "Efficiency",
+            "commodityName": "VMEM",
+            "from": “2GB",
+            "to": "1GB",
+            "risk": "Action Risk Description",
+            "savings": 123.45,
+            "state": "PENDING_ACCEPT",
+            "type": "RIGHT_SIZE",
+            "timestampMsec": 123456789,
+            "targetEntity":
+            {
+                "uuid": "vm-367",
+                "name": "ACM-L-Tomcat1-172.25",
+                "type": "VIRTUAL_MACHINE",
+                "targetName": "vsphere-dc1.corp",
+                "targetType": "vCenter"
+            }
+        }
+        … // Extra fields removed
+    ]
+}
+</pre>
+
+<p><strong>Sample Response:</strong></p>
+
+<pre>
+{
+    "result": {
+        "succeeded": [
+            {
+                "oid": " A1234567890",
+                "changeRequestId": "eda81daedbcbb3005e691fe9689619e1",
+                "changeRequestNumber": "CHG0049469",
+                "state": "PENDING_APPROVAL"
+            }
+        ],
+        "failed": []
+    }
+}
+</pre>
+
+<h2 id="update-action-approvals">Update Action Approvals</h2>
+
+<p>Modify existing action approval records that were created by Turbonomic Actions.</p>
+
+<p><strong>API Request:</strong></p>
+
+<p><code class="language-plaintext highlighter-rouge">PUT /api/x_turbo_turbonomic/v1/action/approvals</code></p>
+
+<p><strong>Sample Body:</strong></p>
+
+<pre>
+{
+    "turbonomicInstance": 
+    {
+        "hostOrIP": "10.10.200.80",
+        "status": "ONLINE",
+        "version": "6.4.0-SNAPSHOT"
+    },
+    "actionApprovalUpdates": [
+        {
+            "oid": "A1234567890",
+            "description": "vCenter VM 1 Right Size Action Description",
+            "category": "Efficiency",
+            "commodityName": "VMEM",
+            "from": “2GB",
+            "to": "1GB",
+            "risk": "Action Risk Description",
+            "savings": 123.45,
+            "state": "PENDING_ACCEPT",
+            "type": "RIGHT_SIZE",
+            "timestampMsec": 123456789,
+            "targetEntity":
+            {
+                "uuid": "vm-367",
+                "name": "ACM-L-Tomcat1-172.25",
+                "type": "VIRTUAL_MACHINE",
+                "targetName": "vsphere-dc1.corp",
+                "targetType": "vCenter"
+            }
+        }
+    ]
+}
+</pre>
+
+<p><strong>Sample Response:</strong></p>
+
+<pre>
+{
+    "result": {
+        "succeeded": [
+            {
+                "oid": " A1234567890",
+                "changeRequestId": "eda81daedbcbb3005e691fe9689619e1",
+                "changeRequestNumber": "CHG0049469",
+                "state": "PENDING_APPROVAL"
+            
+        ],
+        "failed": []
+    }
+}
+</pre>
+
+<h2 id="search-action-approvals">Search Action Approvals</h2>
+
+<p>Find a given Turbonomic action approval record in ServiceNow.</p>
+
+<p>You can include the <code class="language-plaintext highlighter-rouge">addAllApprovalsInTransition</code> parameter in the Search call. If you set it to 
+<code class="language-plaintext highlighter-rouge">true</code>, the search result will include all approvals that are in one of these states:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">APPROVED</code></li>
+  <li><code class="language-plaintext highlighter-rouge">IN_PROGRESS</code></li>
+  <li><code class="language-plaintext highlighter-rouge">WAITING_FOR_EXEC</code></li>
+  <li><code class="language-plaintext highlighter-rouge">WAITING_FOR_CR_SCHEDULE</code></li>
+</ul>
+
+<p><strong>API Request:</strong></p>
+
+<p><code class="language-plaintext highlighter-rouge">POST /api/x_turbo_turbonomic/v1/action/search/approvals?addAllApprovalsInTransition=false</code></p>
+
+<p><strong>Sample Body:</strong></p>
+
+<pre>
+{
+    "turbonomicInstance": 
+    {
+        "hostOrIP": "10.10.200.80",
+        "status": "ONLINE",
+        "version": "6.4.0-SNAPSHOT"
+    },
+      "oids": 
+    [
+        "A1234567890”, "B1234567890”
+    ]
+}
+</pre>
+
+<p><strong>Sample Response:</strong></p>
+
+<pre>
+{
+    "result": {
+        "succeeded": [
+            {
+                "oid": " A1234567890",
+                "state": "PENDING_APPROVAL"
+            },
+            {
+                "oid": " B1234567890",
+                "state": "PENDING_APPROVAL"
+            }
+        ],
+        "failed": []
+    }
+}
+</pre>
+
+
+          
+        </article>
+      </div>
+      </section>
+      
+      <div id="navList">
+        
+        <span>
+          <div id="toc">
+            
+            <article class="navList" style="top:10px;">
+              <div id="tocresult" tabIdex="-1" >
+                <ul>
+                  
+                  
+                  <h5><a href="http://localhost:4000/index.html">DOCUMENTATION HOME</a></h5>
+                  
+                  
+                  <h5 style="margin-bottom:1px;">Turbonomic Actions Technical Details</h5>
+                    <ul>
+                    
+                        
+                        <li><a href="http://localhost:4000/page/TechDetails/overview.html">Overview</a></li>
+                        
+                        <ul>
+                          
+                          
+                          
+                        </ul>
+                    
+                        
+                        <li><a href="http://localhost:4000/page/TechDetails/collaboration_diagram.html">Collaboration Diagram</a></li>
+                        
+                        <ul>
+                          
+                          
+                          
+                        </ul>
+                    
+                        
+                        <li><a href="http://localhost:4000/page/TechDetails/REST_API.html">REST API</a></li>
+                        
+                        <ul>
+                          
+                          
+                          
+                        </ul>
+                    
+                        
+                        <li><a href="http://localhost:4000/page/TechDetails/States_and_Transitions.html">Action Approval States and Transitions</a></li>
+                        
+                        <ul>
+                          
+                          
+                          
+                        </ul>
+                    
+                    </ul>
+                  
+                </ul>
+              </div>
+            </article>
+          </div>
+        </span>
+      </div>
+    </div>
+    
+  </body>
+  
+</html>

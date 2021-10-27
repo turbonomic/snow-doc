@@ -26,7 +26,7 @@
       
       <div id="topicDiv">
         <article id ='topicArt' class="topic">
-          <h1></h1>
+          <h1>Collaboration Diagram</h1>
           <!--
           <div style="font-size: 10px;">
             <p>site.github.baseurl is: /pages/turbonomic/snow-doc</p>
@@ -48,26 +48,61 @@
             <p>REPOS URL IS: https://github.com/turbonomic/snow-doc</p>
           </div>
           -->
-          <style type="text/css" media="screen">
-  .container {
-    margin: 10px auto;
-    max-width: 600px;
-    text-align: center;
-  }
-  h1 {
-    margin: 30px 0;
-    font-size: 4em;
-    line-height: 1;
-    letter-spacing: -1px;
-  }
-</style>
+          <p>This diagram illustrates the main components of Turbonomic 
+Actions, and the component interactions:</p>
 
-<div class="container">
-  <h1>404</h1>
+<p><img src="/assets/SNOW_Collaboration_Diagram.png" alt="Collaboration Diagram" /></p>
 
-  <p><strong>Page not found :(</strong></p>
-  <p>The requested page could not be found.</p>
-</div>
+<p>The Turbonomic configures the ServiceNow target and then configures automation 
+policies to send specific actions to ServiceNow for approval. For any actions that are configured for 
+approval, the default action approval workflow is:</p>
+
+<ol>
+  <li>
+    <p>The ServiceNow probe periodically uses REST API calls to send actions for approval to the Turbonomic 
+Actions application (running on ServiceNow).</p>
+  </li>
+  <li>
+    <p>The Turbonomic 
+Actions application creates action approvals for each Turbonomic 
+action.  By default, it creates corresponding Change Requests (CRs) to be approved by the ServiceNow administrator:</p>
+
+    <p>a. If a change request is approved for a future date/time (Planned Start Date and Planned End Date), 
+ the action will be executed in Turbonomic according to that CR schedule.</p>
+
+    <p>b. If the change request is approved right away, the action returns to Turbonomic 
+ immediately for execution. If is no execution schedule in Turbonomic for that 
+ that action, it executes immediately.  If there is an execution schedule in Turbonomic, 
+ the action executes according to that schedule.</p>
+
+    <p>c. For a rejected change request, the corresponding actions does not execute. In addition, for one week (by default), 
+ Turbonomic will not request new approvals for the same action.</p>
+
+    <p>d. If an action is no longer recommended by Turbonomic, the approval is marked as <em>missed</em> in 
+ ServiceNow after a 24 hour period.</p>
+  </li>
+  <li>
+    <p>The ServiceNow probe periodically polls for action approvals states. If it discovers any approved actions, 
+Turbonomic schedules them for execution.</p>
+  </li>
+  <li>
+    <p>After an action completes its execution, the ServiceNow probe updates the approval state as 
+<code class="language-plaintext highlighter-rouge">SUCCEEDED</code> or <code class="language-plaintext highlighter-rouge">FAILED</code> in ServiceNow. In addition, it directs ServiceNow to close 
+the corresponding change request as successful or unsuccessful.</p>
+  </li>
+</ol>
+
+<hr />
+<p><strong>NOTE:</strong></p>
+
+<p>If you use custom business rules, the integration does not create CRs in ServiceNow. 
+You must create the CRs in your business rules, and the CRs mmust refer to the proper action approvals. 
+When a CR is approved or rejected, the rules must set the action approval state to <code class="language-plaintext highlighter-rouge">APPROVED</code> or 
+<code class="language-plaintext highlighter-rouge">REJECTED</code>, respectively. After Turbonomic executes the action and sets the 
+approval state to <code class="language-plaintext highlighter-rouge">SUCCEEDED</code> or <code class="language-plaintext highlighter-rouge">FAILED</code>, your custome business rules must close the 
+give CR as successful or unsuccessful.</p>
+
+<hr />
 
           
         </article>

@@ -4,3 +4,15 @@ toc:
     - page: Overview
       url: overview.html
       dir: page/TechDetails/overview.html
+
+    - page: Collaboration Diagram
+      url: collaboration_diagram.html
+      dir: page/TechDetails/collaboration_diagram.html
+
+    - page: REST API
+      url: REST_API.html
+      dir: page/TechDetails/REST_API.html
+      
+    - page: Action Approval States and Transitions
+      url: States_and_Transitions.html
+      dir: page/TechDetails/States_and_Transitions.html
