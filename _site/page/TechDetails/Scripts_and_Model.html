@@ -26,7 +26,7 @@
       
       <div id="topicDiv">
         <article id ='topicArt' class="topic">
-          <h1></h1>
+          <h1>Server Scripts and Data Model</h1>
           <!--
           <div style="font-size: 10px;">
             <p>site.github.baseurl is: /pages/turbonomic/snow-doc</p>
@@ -48,26 +48,55 @@
             <p>REPOS URL IS: https://github.com/turbonomic/snow-doc</p>
           </div>
           -->
-          <style type="text/css" media="screen">
-  .container {
-    margin: 10px auto;
-    max-width: 600px;
-    text-align: center;
-  }
-  h1 {
-    margin: 30px 0;
-    font-size: 4em;
-    line-height: 1;
-    letter-spacing: -1px;
-  }
-</style>
+          <p>The Turbonomic Actions application includes 
+a number of scripts. You can identify them by the filename prefix, 
+<code class="language-plaintext highlighter-rouge">Turbonomic</code>.</p>
 
-<div class="container">
-  <h1>404</h1>
+<h2 id="request-processor">Request Processor</h2>
 
-  <p><strong>Page not found :(</strong></p>
-  <p>The requested page could not be found.</p>
-</div>
+<p>The processor logic is implemented in the 
+<code class="language-plaintext highlighter-rouge">TurbonomicRequestProcessor</code> server script. It has dedicated methods for:</p>
+
+<ul>
+  <li>
+    <p>Creating action records.</p>
+  </li>
+  <li>
+    <p>Creating, updating, and searching for action approvals.</p>
+  </li>
+  <li>
+    <p>Getting and creating entries in the Turbonomic Entity table.</p>
+  </li>
+  <li>
+    <p>Getting and updating entries in the Turbonomic Instance table.</p>
+  </li>
+</ul>
+
+<p>The request processor uses the services of <code class="language-plaintext highlighter-rouge">TurbonomicEntityMatcher</code> for finding the 
+The configuration items of the corresponding Turbonomic entities 
+and <code class="language-plaintext highlighter-rouge">TurbonomicActionApprovalManager</code> for action reconciliation purposes.</p>
+
+<p>All data is 
+written to the application tables via the data access object scripts: 
+<code class="language-plaintext highlighter-rouge">TurbonomicActionDAO</code> and <code class="language-plaintext highlighter-rouge">TurbonomicChangeRequestDAO</code>. These scripts rely 
+on the import set mechanism to insert and update the table records.</p>
+
+<h2 id="action-approval-manager">Action Approval Manager</h2>
+
+<p>The action approval manager is implemented in the <code class="language-plaintext highlighter-rouge">TurbonomicActionApprovalManager</code> script.</p>
+
+<p>This module adds and updates action approval records in ServiceNow, based on the input set of 
+Turbonomic actions that require external approval. When a new action 
+approval record is created, a corresponding change request is also generated for it (if 
+custom business rules are not in use). The ServiceNow administrator will approve or cancel 
+the change request and that will automatically update the state of its matching action approval. 
+Turbonomic then decides whether to execute the given action, based on 
+the <code class="language-plaintext highlighter-rouge">APPROVED</code> or <code class="language-plaintext highlighter-rouge">REJECTED</code> state of the action approval record found in ServiceNow.</p>
+
+<p>Another major responsibility of the action approval manager is to perform action 
+reconciliation, based on the Turbonomic action state and the state 
+of the action’s corresponding action approval record in ServiceNow.</p>
+
 
           
         </article>

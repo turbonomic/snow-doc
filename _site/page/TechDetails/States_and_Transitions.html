@@ -106,8 +106,138 @@ the Turbonomic Actions application are:</p>
 
 <p><img src="/assets/SNOW_Action_State_Diagram.png" alt="Action State Diagram" /></p>
 
+<p>The initial state of each action approval is PENDING_APPROVAL. From that state an approval will move to one of the following ones:</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">APPROVED</code>
+The CR generated for the action approval has been approved (e.g. its state is 
+<code class="language-plaintext highlighter-rouge">SCHEDULED</code> or <code class="language-plaintext highlighter-rouge">IMPLEMENT</code>) and its schedule is on, or there is no schedule configured 
+for that change request.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">WAITING_FOR_CR_SCHEDULE</code>
+The corresponding CR has been approved and has a future schedule associated to it.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">REJECTED</code>
+The CR referred by the action approval has been canceled.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">MISSED</code>
+Turbonomic no longer recommends this action. Turbonomic 
+hasn’t recommended the action 
+for a period longer than [<code class="language-plaintext highlighter-rouge">Last_Recommended_Time</code> + <code class="language-plaintext highlighter-rouge">Action_Retention_Time</code>], where:</p>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">Last_Recommended_Time</code> = the last time the action was recommended by Turbonomic;</li>
+      <li><code class="language-plaintext highlighter-rouge">Action_Retention_Time</code> = the Action Retention setting (1 day by default);</li>
+    </ul>
+  </li>
+</ul>
+
+<p>From the <code class="language-plaintext highlighter-rouge">APPROVED</code> state, the action approval can transition into one of the following states:</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">WAITING_FOR_CR_SCHEDULE</code>
+The action’s corresponding CR has a schedule associated to it and that schedule is off.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">WAITING_FOR_EXEC</code>
+Turbonomic has scheduled the approved action for execution.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">IN_PROGRESS</code>
+Turbonomic has started execution of the action.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">SUCCEEDED</code>
+The approved action has been successfully executed by Turbonomic.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">FAILED</code>
+The approved action failed its execution in Turbonomic.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">MISSED</code>
+Turbonomic no longer recommends this action. Turbonomic 
+hasn’t recommended the action 
+for a period longer than [<code class="language-plaintext highlighter-rouge">Last_Recommended_Time</code> + <code class="language-plaintext highlighter-rouge">Action_Retention_Time</code>], where:</p>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">Last_Recommended_Time</code> = the last time the action was recommended by Turbonomic;</li>
+      <li><code class="language-plaintext highlighter-rouge">Action_Retention_Time</code> = the Action Retention setting (1 day by default);</li>
+    </ul>
+  </li>
+</ul>
+
+<p>From the <code class="language-plaintext highlighter-rouge">WAITING_FOR_CR_SCHEDULE</code> state, an approval can transition into one of the following states:</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">APPROVED</code>
+The approval’s corresponding CR has a schedule associated to, it and that schedule is on.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">MISSED</code>
+Turbonomic no longer recommends this action. Turbonomic 
+hasn’t recommended the action 
+for a period longer than [<code class="language-plaintext highlighter-rouge">Last_Recommended_Time</code> + <code class="language-plaintext highlighter-rouge">Action_Retention_Time</code>], where:</p>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">Last_Recommended_Time</code> = the last time the action was recommended by Turbonomic;</li>
+      <li><code class="language-plaintext highlighter-rouge">Action_Retention_Time</code> = the Action Retention setting (1 day by default);</li>
+    </ul>
+  </li>
+</ul>
+
+<p>From the <code class="language-plaintext highlighter-rouge">WAITING_FOR_EXEC</code> state, an approval can transition into one of the following states:</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">IN_PROGRESS</code>
+Turbonomic has started execution of the action.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">SUCCEEDED</code>
+The approved action has been successfully executed by Turbonomic.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">FAILED</code>
+The approved action failed its execution in Turbonomic.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">MISSED</code>
+Turbonomic no longer recommends this action. Turbonomic 
+hasn’t recommended the action 
+for a period longer than [<code class="language-plaintext highlighter-rouge">Last_Recommended_Time</code> + <code class="language-plaintext highlighter-rouge">Action_Retention_Time</code>], where:</p>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">Last_Recommended_Time</code> = the last time the action was recommended by Turbonomic;</li>
+      <li><code class="language-plaintext highlighter-rouge">Action_Retention_Time</code> = the Action Retention setting (1 day by default);</li>
+    </ul>
+  </li>
+</ul>
+
+<p>From the <code class="language-plaintext highlighter-rouge">IN_PROGRESS</code> state, an action approval can transition to one of the following states:</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">SUCCEEDED</code>
+The approved action has been successfully executed by Turbonomic.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">FAILED</code>
+The approved action failed its execution in Turbonomic.</p>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong>NOTE:</strong></p>
+
+<p>For reference, this diagram shows the action states and their transitions in Turbonomic:</p>
+
 <p><img src="/assets/SNOW_T8c_Action_State_Diagram.png" alt="Action State Diagram" /></p>
 
+<hr />
 
           
         </article>
@@ -159,6 +289,15 @@ the Turbonomic Actions application are:</p>
                     
                         
                         <li><a href="http://localhost:4000/page/TechDetails/States_and_Transitions.html">Action Approval States and Transitions</a></li>
+                        
+                        <ul>
+                          
+                          
+                          
+                        </ul>
+                    
+                        
+                        <li><a href="http://localhost:4000/page/TechDetails/Scripts_and_Model.html">Server Scripts and Data Model</a></li>
                         
                         <ul>
                           

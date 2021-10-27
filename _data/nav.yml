@@ -16,3 +16,7 @@ toc:
     - page: Action Approval States and Transitions
       url: States_and_Transitions.html
       dir: page/TechDetails/States_and_Transitions.html
+      
+    - page: Server Scripts and Data Model
+      url: Scripts_and_Model.html
+      dir: page/TechDetails/Scripts_and_Model.html
