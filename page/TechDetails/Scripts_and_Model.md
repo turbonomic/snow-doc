@@ -65,6 +65,51 @@ see [APPENDIX Implementing Custom CI Matching](/page/TechDetails/Custom_CI_Match
 
 ---
 
+## Data Access Objects
+
+This module accesses data in the {{ site.data.vars.Product_Short }} Actions application, and 
+in ServiceNow.
+
+The `TurbonomicActionDAO` script reads and writes records in tables that are installed as part 
+of the {{ site.data.vars.Product_Short }} Actions application.  The `TurbonomicChangeRequestDAO` 
+script reads and writes records in the `change_request` table that is managed by ServiceNow. 
+When loading and storing this data, the module uses the following scripts:
+
+- `TurbonomicActionApproval` -- stores records from the {{ site.data.vars.Product_Short }} Action Approval table.
+
+- `TurbonomicActionApprovalState` -- stores all possible action approval states that are defined in the {{ site.data.vars.Product_Short }} Action State table.
+
+- `TurbonomicActionRecord` -- stores record data from the {{ site.data.vars.Product_Short }} Action Record table.
+
+- `TurbonomicChangeRequest` -- stores change request data required by the {{ site.data.vars.Product_Short }} action application.
+
+- `TurbonomicChangeRequestState` -- defines the supported change request states.
+
+- `TurbonomicEntity` -- stores the record data from the {{ site.data.vars.Product_Short }} Entity table.
+
+- `TurbonomicInstance` -- stores the records data from the {{ site.data.vars.Product_Short }} Instance table.
+
+## Data Model
+
+The data model for {{ site.data.vars.Product_Short }} Actions is represented by a number of 
+tables.  The most important of these are:
+
+- {{ site.data.vars.Product_Short }} Action Approval (`x_turbo_turbonomic_turbonomic_action_approval`)
+
+- {{ site.data.vars.Product_Short }} Action Record (`x_turbo_turbonomic_turbonomic_action_record`)
+
+- {{ site.data.vars.Product_Short }} Action Settings (`x_turbo_turbonomic_turbonomic_settings`)
+
+- {{ site.data.vars.Product_Short }} Action State (`x_turbo_turbonomic_turbonomic_action_state`)
+
+- {{ site.data.vars.Product_Short }} Entity (`x_turbo_turbonomic_x_turbonomic_entity`)
+
+- {{ site.data.vars.Product_Short }} Instance (`x_turbo_turbonomic_turbonomic_instance`)
+
+Note that we have implemented matching import set tables to work with these tables. 
+This enables the application to add or update the table data.
+
+
 
 
 

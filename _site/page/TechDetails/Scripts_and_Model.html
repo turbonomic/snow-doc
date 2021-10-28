@@ -116,6 +116,69 @@ see <a href="/page/TechDetails/Custom_CI_Matching.html">APPENDIX Implementing Cu
 
 <hr />
 
+<h2 id="data-access-objects">Data Access Objects</h2>
+
+<p>This module accesses data in the Turbonomic Actions application, and 
+in ServiceNow.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">TurbonomicActionDAO</code> script reads and writes records in tables that are installed as part 
+of the Turbonomic Actions application.  The <code class="language-plaintext highlighter-rouge">TurbonomicChangeRequestDAO</code> 
+script reads and writes records in the <code class="language-plaintext highlighter-rouge">change_request</code> table that is managed by ServiceNow. 
+When loading and storing this data, the module uses the following scripts:</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">TurbonomicActionApproval</code> – stores records from the Turbonomic Action Approval table.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">TurbonomicActionApprovalState</code> – stores all possible action approval states that are defined in the Turbonomic Action State table.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">TurbonomicActionRecord</code> – stores record data from the Turbonomic Action Record table.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">TurbonomicChangeRequest</code> – stores change request data required by the Turbonomic action application.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">TurbonomicChangeRequestState</code> – defines the supported change request states.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">TurbonomicEntity</code> – stores the record data from the Turbonomic Entity table.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">TurbonomicInstance</code> – stores the records data from the Turbonomic Instance table.</p>
+  </li>
+</ul>
+
+<h2 id="data-model">Data Model</h2>
+
+<p>The data model for Turbonomic Actions is represented by a number of 
+tables.  The most important of these are:</p>
+
+<ul>
+  <li>
+    <p>Turbonomic Action Approval (<code class="language-plaintext highlighter-rouge">x_turbo_turbonomic_turbonomic_action_approval</code>)</p>
+  </li>
+  <li>
+    <p>Turbonomic Action Record (<code class="language-plaintext highlighter-rouge">x_turbo_turbonomic_turbonomic_action_record</code>)</p>
+  </li>
+  <li>
+    <p>Turbonomic Action Settings (<code class="language-plaintext highlighter-rouge">x_turbo_turbonomic_turbonomic_settings</code>)</p>
+  </li>
+  <li>
+    <p>Turbonomic Action State (<code class="language-plaintext highlighter-rouge">x_turbo_turbonomic_turbonomic_action_state</code>)</p>
+  </li>
+  <li>
+    <p>Turbonomic Entity (<code class="language-plaintext highlighter-rouge">x_turbo_turbonomic_x_turbonomic_entity</code>)</p>
+  </li>
+  <li>
+    <p>Turbonomic Instance (<code class="language-plaintext highlighter-rouge">x_turbo_turbonomic_turbonomic_instance</code>)</p>
+  </li>
+</ul>
+
+<p>Note that we have implemented matching import set tables to work with these tables. 
+This enables the application to add or update the table data.</p>
+
 
           
         </article>

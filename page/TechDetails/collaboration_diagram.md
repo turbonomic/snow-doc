@@ -6,6 +6,8 @@ title: Collaboration Diagram
 This diagram illustrates the main components of {{ site.data.vars.Product_Short }} 
 Actions, and the component interactions:
 
+![steam-fish-1](/assets/SNOW_Collaboration_Diagram.png){: width="850" }
+
 {% if site.github.pages_hostname == "github.io" %}
 <img src="{{ site.github.baseurl }}{{ '/assets/SNOW_Collaboration_Diagram.png' | relative_url }}" alt="Collaboration Diagram">
 {% else %}
