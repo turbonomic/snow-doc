@@ -26,18 +26,18 @@ has a corresponding Change Request (CR) and Target Entity reference. Also, more 
 are stored in the Action DTO field:
 
 {% if site.github.pages_hostname == "github.io" %}
-<img src="{{ site.github.baseurl }}{{ '/assets/SNOW_CI_Matching_RefScreen1.png' | relative_url }}" alt="CI Matching">
+<img src="{{ site.github.baseurl }}{{ '/assets/SNOW_CI_Matching_RefScreen1.png' | relative_url }}" width="750" alt="CI Matching">
 {% else %}
-<img src="{{ '/assets/SNOW_CI_Matching_RefScreen1.png' | relative_url }}" alt="CI Matching">
+<img src="{{ '/assets/SNOW_CI_Matching_RefScreen1.png' | relative_url }}" width="750" alt="CI Matching">
 {% endif %}
 
 If ServiceNow contains a valid configuration item for the given {{ site.data.vars.Product_Short }} action, 
 the Target Entity will store its reference in the Related CI field:
 
 {% if site.github.pages_hostname == "github.io" %}
-<img src="{{ site.github.baseurl }}{{ '/assets/SNOW_CI_Matching_RefScreen2.png' | relative_url }}" alt="CI Matching">
+<img src="{{ site.github.baseurl }}{{ '/assets/SNOW_CI_Matching_RefScreen2.png' | relative_url }}" width="750" alt="CI Matching">
 {% else %}
-<img src="{{ '/assets/SNOW_CI_Matching_RefScreen2.png' | relative_url }}" alt="CI Matching">
+<img src="{{ '/assets/SNOW_CI_Matching_RefScreen2.png' | relative_url }}" width="750" alt="CI Matching">
 {% endif %}
 
 If the Related CI is missing or is not the desired match, you can implement a 
@@ -48,9 +48,9 @@ action approval. You should create this advanced business rule for the
 every insert operation:
 
 {% if site.github.pages_hostname == "github.io" %}
-<img src="{{ site.github.baseurl }}{{ '/assets/SNOW_CI_Matching_CustomRule.png' | relative_url }}" alt="CI Matching Custom Rule">
+<img src="{{ site.github.baseurl }}{{ '/assets/SNOW_CI_Matching_CustomRule.png' | relative_url }}" width="750" alt="CI Matching Custom Rule">
 {% else %}
-<img src="{{ '/assets/SNOW_CI_Matching_CustomRule.png' | relative_url }}" alt="CI Matching Custom Rule">
+<img src="{{ '/assets/SNOW_CI_Matching_CustomRule.png' | relative_url }}" width="750" alt="CI Matching Custom Rule">
 {% endif %}
 
 You implement the logic for CI matching in JavaScript, in the **Advanced** section of the new rule. 
@@ -101,9 +101,9 @@ Further, assume the physical machine details are already stored in the `cmdb_ci_
 and its ID is correctly set in the Correlation ID (`correlation_id`) column:
 
 {% if site.github.pages_hostname == "github.io" %}
-<img src="{{ site.github.baseurl }}{{ '/assets/SNOW_CI_Matching_Correlation_ID.png' | relative_url }}" alt="CI Matching Custom Rule CI ID">
+<img src="{{ site.github.baseurl }}{{ '/assets/SNOW_CI_Matching_Correlation_ID.png' | relative_url }}" width="750" alt="CI Matching Custom Rule CI ID">
 {% else %}
-<img src="{{ '/assets/SNOW_CI_Matching_Correlation_ID.png' | relative_url }}" alt="CI Matching Custom Rule CI ID">
+<img src="{{ '/assets/SNOW_CI_Matching_Correlation_ID.png' | relative_url }}" width="750" alt="CI Matching Custom Rule CI ID">
 {% endif %}
 
 Given the above, the custom CI script should be similar to:

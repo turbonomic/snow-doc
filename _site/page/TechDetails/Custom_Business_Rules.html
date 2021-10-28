@@ -26,7 +26,7 @@
       
       <div id="topicDiv">
         <article id ='topicArt' class="topic">
-          <h1>Collaboration Diagram</h1>
+          <h1>Custom Business Rules</h1>
           <!--
           <div style="font-size: 10px;">
             <p>site.github.baseurl is: /pages/turbonomic/snow-doc</p>
@@ -48,59 +48,95 @@
             <p>REPOS URL IS: https://github.com/turbonomic/snow-doc</p>
           </div>
           -->
-          <p>This diagram illustrates the main components of Turbonomic 
-Actions, and the component interactions:</p>
+          <p>By default, the Turbonomic Actions app creates corresponding 
+change requests in ServiceNow for each action approval. When the change requests states 
+do not match those the application expects or when you have complex workflows for 
+creating and managing your CRs, you must implement custom custom business rules.</p>
 
-<p><img src="/assets/SNOW_Collaboration_Diagram.png" alt="Collaboration Diagram" width="850" /></p>
+<p>The default change request states used by the Turbonomic 
+Actions application are:</p>
 
-<p>The Turbonomic configures the ServiceNow target and then configures automation 
-policies to send specific actions to ServiceNow for approval. For any actions that are configured for 
-approval, the default action approval workflow is:</p>
+<table>
+  <thead>
+    <tr>
+      <th>Change Request State</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>NEW</td>
+      <td>-5</td>
+    </tr>
+    <tr>
+      <td>ASSESS</td>
+      <td>-4</td>
+    </tr>
+    <tr>
+      <td>AUTHORIZE</td>
+      <td>-3</td>
+    </tr>
+    <tr>
+      <td>SCHEDULED</td>
+      <td>-2</td>
+    </tr>
+    <tr>
+      <td>IMPLEMENT</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <td>REVIEW</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>CLOSE</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>CANCELLED</td>
+      <td>4</td>
+    </tr>
+  </tbody>
+</table>
 
-<ol>
+<p>To enable your custom business rules, you must check the 
+<strong>Use Custom Business Rule for CR Creation</strong> application setting:</p>
+
+<p><img src="/assets/SNOW_Cust_BR_Enable.png" alt="Enabling Custom Business Rules" width="950" /></p>
+
+<p>Note that your custom business rules must:</p>
+
+<ul>
   <li>
-    <p>The ServiceNow probe periodically uses REST API calls to send actions for approval to the Turbonomic 
-Actions application (running on ServiceNow).</p>
+    <p>Create a new CR for every newly added action approval record in 
+the <code class="language-plaintext highlighter-rouge">PENDING_APPROVAL</code> state. It must also link the CR to the action approval.</p>
   </li>
   <li>
-    <p>The Turbonomic 
-Actions application creates action approvals for each Turbonomic 
-action.  By default, it creates corresponding Change Requests (CRs) to be approved by the ServiceNow administrator:</p>
-
-    <p>a. If a change request is approved for a future date/time (Planned Start Date and Planned End Date), 
- the action will be executed in Turbonomic according to that CR schedule.</p>
-
-    <p>b. If the change request is approved right away, the action returns to Turbonomic 
- immediately for execution. If is no execution schedule in Turbonomic for that 
- that action, it executes immediately.  If there is an execution schedule in Turbonomic, 
- the action executes according to that schedule.</p>
-
-    <p>c. For a rejected change request, the corresponding actions does not execute. In addition, for one week (by default), 
- Turbonomic will not request new approvals for the same action.</p>
-
-    <p>d. If an action is no longer recommended by Turbonomic, the approval is marked as <em>missed</em> in 
- ServiceNow after a 24 hour period.</p>
+    <p>For every change request, update the state of its corresponding action approval 
+based on the approval/rejection of the request. When the CR is canceled, the action 
+approval state must be set to <code class="language-plaintext highlighter-rouge">REJECTED</code>. When the CR is approved, the action approval 
+state must be set to <code class="language-plaintext highlighter-rouge">APPROVED</code>.</p>
   </li>
   <li>
-    <p>The ServiceNow probe periodically polls for action approvals states. If it discovers any approved actions, 
-Turbonomic schedules them for execution.</p>
+    <p>If a CR is approved but has a future schedule attached to it (Planned Start Date is 
+in the future), the state of its corresponding action approval must be set to 
+<code class="language-plaintext highlighter-rouge">WAITING_FOR_CR_SCHEDULE</code>. Later on, when the CR schedule is on, the rule must change 
+the approval state to <code class="language-plaintext highlighter-rouge">APPROVED</code>.</p>
   </li>
   <li>
-    <p>After an action completes its execution, the ServiceNow probe updates the approval state as 
-<code class="language-plaintext highlighter-rouge">SUCCEEDED</code> or <code class="language-plaintext highlighter-rouge">FAILED</code> in ServiceNow. In addition, it directs ServiceNow to close 
-the corresponding change request as successful or unsuccessful.</p>
+    <p>After the Turbonomic action completes its execution and the 
+approval state is set to <code class="language-plaintext highlighter-rouge">SUCCEEDED</code> or <code class="language-plaintext highlighter-rouge">FAILED</code>, the rule must close the corresponding 
+CR as successful or unsuccessful, respectively. Similarly, the rule must close the CR as 
+unsuccessful when the action approval transitions to the <code class="language-plaintext highlighter-rouge">MISSED</code> state.</p>
   </li>
-</ol>
+</ul>
 
 <hr />
-<p><strong>NOTE:</strong> If you use custom business rules, the integration does not create CRs in ServiceNow. 
-You must create the CRs in your business rules, and the CRs mmust refer to the proper action approvals. 
-When a CR is approved or rejected, the rules must set the action approval state to <code class="language-plaintext highlighter-rouge">APPROVED</code> or 
-<code class="language-plaintext highlighter-rouge">REJECTED</code>, respectively. After Turbonomic executes the action and sets the 
-approval state to <code class="language-plaintext highlighter-rouge">SUCCEEDED</code> or <code class="language-plaintext highlighter-rouge">FAILED</code>, your custome business rules must close the 
-give CR as successful or unsuccessful.</p>
+<p><strong>Note:</strong> If your business rules do not implement these logic steps, we cannot guarantee that 
+  Turbonomic will execute the given actions.</p>
 
 <hr />
+
 
           
         </article>

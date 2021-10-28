@@ -5,7 +5,7 @@ title: Action Approval States and Transitions
 The valid action states in {{ site.data.vars.Product_Short }}  and 
 the {{ site.data.vars.Product_Short }} Actions application are:
 
-| **{{ site.data.vars.Product_Short }} Action State** | **Action Approval States** |
+| {{ site.data.vars.Product_Short }} Action State | Action Approval States |
 | --- | --- |
 | PENDING_ACCEPT | PENDING_APPROVAL |
 | ACCEPTED | APPROVED |
@@ -22,9 +22,9 @@ The states and their transitions are as follows:
 
 
 {% if site.github.pages_hostname == "github.io" %}
-<img src="{{ site.github.baseurl }}{{ '/assets/SNOW_Action_State_Diagram.png' | relative_url }}" alt="Action State Diagram">
+<img src="{{ site.github.baseurl }}{{ '/assets/SNOW_Action_State_Diagram.png' | relative_url }}" width="850" alt="Action State Diagram">
 {% else %}
-<img src="{{ '/assets/SNOW_Action_State_Diagram.png' | relative_url }}" alt="Action State Diagram">
+<img src="{{ '/assets/SNOW_Action_State_Diagram.png' | relative_url }}" width="850" alt="Action State Diagram">
 {% endif %}
 
 The initial state of each action approval is PENDING_APPROVAL. From that state an approval will move to one of the following ones:

@@ -6,12 +6,10 @@ title: Collaboration Diagram
 This diagram illustrates the main components of {{ site.data.vars.Product_Short }} 
 Actions, and the component interactions:
 
-![steam-fish-1](/assets/SNOW_Collaboration_Diagram.png){: width="850" }
-
 {% if site.github.pages_hostname == "github.io" %}
-<img src="{{ site.github.baseurl }}{{ '/assets/SNOW_Collaboration_Diagram.png' | relative_url }}" alt="Collaboration Diagram">
+<img src="{{ site.github.baseurl }}{{ '/assets/SNOW_Collaboration_Diagram.png' | relative_url }}" alt="Collaboration Diagram" width="850" >
 {% else %}
-<img src="{{ '/assets/SNOW_Collaboration_Diagram.png' | relative_url }}" alt="Collaboration Diagram">
+<img src="{{ '/assets/SNOW_Collaboration_Diagram.png' | relative_url }}" alt="Collaboration Diagram" width="850" >
 {% endif %}
 
 
@@ -51,9 +49,7 @@ approval, the default action approval workflow is:
 
 
 ---
-**NOTE:** 
-
-If you use custom business rules, the integration does not create CRs in ServiceNow. 
+**NOTE:** If you use custom business rules, the integration does not create CRs in ServiceNow. 
 You must create the CRs in your business rules, and the CRs mmust refer to the proper action approvals. 
 When a CR is approved or rejected, the rules must set the action approval state to `APPROVED` or 
 `REJECTED`, respectively. After {{ site.data.vars.Product_Short }} executes the action and sets the 

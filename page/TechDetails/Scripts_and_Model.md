@@ -57,9 +57,7 @@ Azure environments. We reserve the right to implement additional entity matching
 in future application releases.
 
 ---
-**Note:**
-
-If the default CI matching mechanism doesn't work on the customer environment, you can implement 
+**Note:** If the default CI matching mechanism doesn't work on the customer environment, you can implement 
 a custom business rule for that purpose. For an example custom rule,
 see [APPENDIX Implementing Custom CI Matching](/page/TechDetails/Custom_CI_Matching.html).
 

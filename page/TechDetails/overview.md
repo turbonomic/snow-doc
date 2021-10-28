@@ -18,9 +18,7 @@ The integration targets {{ site.data.vars.Product_Short }} releases and can be i
 ServiceNow Paris, Quebec, and Rome environments.
 
 ---
-NOTE:
-
-An important use case for this integration is the implementation of 
+NOTE:  An important use case for this integration is the implementation of 
 custom business rules to create Change Requests (CRs) and to update action approval 
 states. For more informationm see <b>XREF GOES HERE!!!</b>
 

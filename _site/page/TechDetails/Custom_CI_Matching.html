@@ -75,12 +75,12 @@ Turbonomic for those virtual machines.</p>
 has a corresponding Change Request (CR) and Target Entity reference. Also, more action details 
 are stored in the Action DTO field:</p>
 
-<p><img src="/assets/SNOW_CI_Matching_RefScreen1.png" alt="CI Matching" /></p>
+<p><img src="/assets/SNOW_CI_Matching_RefScreen1.png" width="750" alt="CI Matching" /></p>
 
 <p>If ServiceNow contains a valid configuration item for the given Turbonomic action, 
 the Target Entity will store its reference in the Related CI field:</p>
 
-<p><img src="/assets/SNOW_CI_Matching_RefScreen2.png" alt="CI Matching" /></p>
+<p><img src="/assets/SNOW_CI_Matching_RefScreen2.png" width="750" alt="CI Matching" /></p>
 
 <p>If the Related CI is missing or is not the desired match, you can implement a 
 custom business rule in ServiceNow.  Navigate to <strong>System Definition &gt; Business Rules</strong> 
@@ -89,7 +89,7 @@ action approval. You should create this advanced business rule for the
 <strong>Turbonomic Action Approval</strong> table. This rule triggers after 
 every insert operation:</p>
 
-<p><img src="/assets/SNOW_CI_Matching_CustomRule.png" alt="CI Matching Custom Rule" /></p>
+<p><img src="/assets/SNOW_CI_Matching_CustomRule.png" width="750" alt="CI Matching Custom Rule" /></p>
 
 <p>You implement the logic for CI matching in JavaScript, in the <strong>Advanced</strong> section of the new rule. 
 For example, assume you want to match the ESX host in ServiceNow, based on the <code class="language-plaintext highlighter-rouge">id</code> value of the 
@@ -138,7 +138,7 @@ For example, assume you want to match the ESX host in ServiceNow, based on the <
 <p>Further, assume the physical machine details are already stored in the <code class="language-plaintext highlighter-rouge">cmdb_ci_esx_server</code> table, 
 and its ID is correctly set in the Correlation ID (<code class="language-plaintext highlighter-rouge">correlation_id</code>) column:</p>
 
-<p><img src="/assets/SNOW_CI_Matching_Correlation_ID.png" alt="CI Matching Custom Rule CI ID" /></p>
+<p><img src="/assets/SNOW_CI_Matching_Correlation_ID.png" width="750" alt="CI Matching Custom Rule CI ID" /></p>
 
 <p>Given the above, the custom CI script should be similar to:</p>
 
@@ -265,6 +265,24 @@ particular action approval.</p>
                     
                         
                         <li><a href="http://localhost:4000/page/TechDetails/Scripts_and_Model.html">Server Scripts and Data Model</a></li>
+                        
+                        <ul>
+                          
+                          
+                          
+                        </ul>
+                    
+                        
+                        <li><a href="http://localhost:4000/page/TechDetails/Transform_Maps.html">Transform Maps</a></li>
+                        
+                        <ul>
+                          
+                          
+                          
+                        </ul>
+                    
+                        
+                        <li><a href="http://localhost:4000/page/TechDetails/Custom_Business_Rules.html">Custom Business Rules</a></li>
                         
                         <ul>
                           
