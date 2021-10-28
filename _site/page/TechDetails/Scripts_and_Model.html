@@ -83,7 +83,7 @@ on the import set mechanism to insert and update the table records.</p>
 
 <h2 id="action-approval-manager">Action Approval Manager</h2>
 
-<p>The action approval manager is implemented in the <code class="language-plaintext highlighter-rouge">TurbonomicActionApprovalManager</code> script.</p>
+<p>The action Approval Manager is implemented in the <code class="language-plaintext highlighter-rouge">TurbonomicActionApprovalManager</code> script.</p>
 
 <p>This module adds and updates action approval records in ServiceNow, based on the input set of 
 Turbonomic actions that require external approval. When a new action 
@@ -96,6 +96,25 @@ the <code class="language-plaintext highlighter-rouge">APPROVED</code> or <code 
 <p>Another major responsibility of the action approval manager is to perform action 
 reconciliation, based on the Turbonomic action state and the state 
 of the action’s corresponding action approval record in ServiceNow.</p>
+
+<h2 id="entity-matcher">Entity Matcher</h2>
+
+<p>The action Entity Manager is implemented in the <code class="language-plaintext highlighter-rouge">TurbonomicEntityMatcher</code> script.</p>
+
+<p>This module serves to find the corresponding Configuration Item (CI) in ServiceNow for a given 
+Turbonomic entity. Currently, the Turbonomic Actions 
+application has matching capabilities for virtual machines hosted in vCenter, Hyper-V, AWS or 
+Azure environments. We reserve the right to implement additional entity matching logic 
+in future application releases.</p>
+
+<hr />
+<p><strong>Note:</strong></p>
+
+<p>If the default CI matching mechanism doesn’t work on the customer environment, you can implement 
+a custom business rule for that purpose. For an example custom rule,
+see <a href="/page/TechDetails/Custom_CI_Matching.html">APPENDIX Implementing Custom CI Matching</a>.</p>
+
+<hr />
 
 
           
@@ -157,6 +176,15 @@ of the action’s corresponding action approval record in ServiceNow.</p>
                     
                         
                         <li><a href="http://localhost:4000/page/TechDetails/Scripts_and_Model.html">Server Scripts and Data Model</a></li>
+                        
+                        <ul>
+                          
+                          
+                          
+                        </ul>
+                    
+                        
+                        <li><a href="http://localhost:4000/page/TechDetails/Custom_CI_Matching.html">APPENDIX Implementing Custom CI Matching</a></li>
                         
                         <ul>
                           

@@ -32,7 +32,7 @@ on the import set mechanism to insert and update the table records.
 
 ## Action Approval Manager
 
-The action approval manager is implemented in the `TurbonomicActionApprovalManager` script. 
+The action Approval Manager is implemented in the `TurbonomicActionApprovalManager` script. 
 
 This module adds and updates action approval records in ServiceNow, based on the input set of 
 {{ site.data.vars.Product_Short }} actions that require external approval. When a new action 
@@ -45,5 +45,31 @@ the `APPROVED` or `REJECTED` state of the action approval record found in Servic
 Another major responsibility of the action approval manager is to perform action 
 reconciliation, based on the {{ site.data.vars.Product_Short }} action state and the state 
 of the action's corresponding action approval record in ServiceNow.
+
+## Entity Matcher
+
+The action Entity Manager is implemented in the `TurbonomicEntityMatcher` script. 
+
+This module serves to find the corresponding Configuration Item (CI) in ServiceNow for a given 
+{{ site.data.vars.Product_Short }} entity. Currently, the {{ site.data.vars.Product_Short }} Actions 
+application has matching capabilities for virtual machines hosted in vCenter, Hyper-V, AWS or 
+Azure environments. We reserve the right to implement additional entity matching logic 
+in future application releases.
+
+---
+**Note:**
+
+If the default CI matching mechanism doesn't work on the customer environment, you can implement 
+a custom business rule for that purpose. For an example custom rule,
+see [APPENDIX Implementing Custom CI Matching](/page/TechDetails/Custom_CI_Matching.html).
+
+---
+
+
+
+
+
+
+
 
 

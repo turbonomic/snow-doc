@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  <!-- Page title set in pageTitle directive -->
+  <title page-title>Turbonomic Actions</title>
+  
+  
+  <link href="http://localhost:4000/css/FourD_CSS/vmtHelp.css" rel="stylesheet" type="text/css"/>
+  
+  
+  <body>
+    
+    <div id="angularThing" ng-controller="TopicCtrl as mainCtrl">
+      <nav class='banner'>
+        <div class="bannerbar" >
+          
+          
+          <img src="/assets/logos/logoInv.png" id="logo_image" style="width: 80%; max-width: 100px;"/>
+          
+          <div class="titleHead">
+            <h4 class="revision"><font color="white">Turbonomic Actions</span></font></h4>
+          </div>
+        </div>
+      </nav>
+      
+      
+      <div id="topicDiv">
+        <article id ='topicArt' class="topic">
+          <h1>APPENDIX Implementing Custom CI Matching</h1>
+          <!--
+          <div style="font-size: 10px;">
+            <p>site.github.baseurl is: /pages/turbonomic/snow-doc</p>
+            
+            
+            
+            <p>CSS LINK IS: http://localhost:4000/css/FourD_CSS/vmtHelp.css</p>
+            
+            
+            
+            <p>LOGO LINK IS: /assets/logos/logoInv.png</p>
+            
+            
+            
+            
+            <p>DOC HOME LINK: http://localhost:4000/index.html</p>
+            
+            
+            <p>REPOS URL IS: https://github.com/turbonomic/snow-doc</p>
+          </div>
+          -->
+          <p>By default, the Turbonomic Actions application assumes the 
+ServiceNow instance has been configured to use its Discovery plugin to get VM details 
+from AWS, Azure, Hyper-V and vCenter environments. It uses those details to 
+create Configuration Items (CIs). On the Settings UI page, the <strong>CI Matching Details 
+for Virtual Machines</strong> section lists the VM table names and columns that ServiceNow uses 
+for matching. This matching is based on the vendor IDs already discovered in 
+Turbonomic for those virtual machines.</p>
+
+<p>However, you must implement custom CI matching if:</p>
+
+<ul>
+  <li>
+    <p>The ServiceNow instance is configured to use a different discovery mechanism 
+(e.g. Dynatrace, BMC) to get the virtual machine details.</p>
+  </li>
+  <li>
+    <p>The ServiceNow administrator wants to generate CRs for other types of configuration items 
+(e.g. Window Servers, ESX Hosts)</p>
+  </li>
+</ul>
+
+<h2 id="creating-custom-ci-matching-business-rules">Creating Custom CI Matching Business Rules</h2>
+
+<p>Each action approval in ServiceNow that matches a valid Turbonomic action
+has a corresponding Change Request (CR) and Target Entity reference. Also, more action details 
+are stored in the Action DTO field:</p>
+
+<p><img src="/assets/SNOW_CI_Matching_RefScreen1.png" alt="CI Matching" /></p>
+
+<p>If ServiceNow contains a valid configuration item for the given Turbonomic action, 
+the Target Entity will store its reference in the Related CI field:</p>
+
+<p><img src="/assets/SNOW_CI_Matching_RefScreen2.png" alt="CI Matching" /></p>
+
+<p>If the Related CI is missing or is not the desired match, you can implement a 
+custom business rule in ServiceNow.  Navigate to <strong>System Definition &gt; Business Rules</strong> 
+and create a rule that selects the correct CI for the given Turbonomic 
+action approval. You should create this advanced business rule for the 
+<strong>Turbonomic Action Approval</strong> table. This rule triggers after 
+every insert operation:</p>
+
+<p><img src="/assets/SNOW_CI_Matching_CustomRule.png" alt="CI Matching Custom Rule" /></p>
+
+<p>You implement the logic for CI matching in JavaScript, in the <strong>Advanced</strong> section of the new rule. 
+For example, assume you want to match the ESX host in ServiceNow, based on the <code class="language-plaintext highlighter-rouge">id</code> value of the 
+<code class="language-plaintext highlighter-rouge">hostedBySE</code> element in the following Action DTO:</p>
+<pre>
+{
+  "actionType": "RIGHT_SIZE",
+  "actionItem": [
+    {
+      "actionType": "RIGHT_SIZE",
+      "uuid": "636783681382171",
+      "targetSE": {
+        "entityType": "VIRTUAL_MACHINE",
+        "id": "421d6fe0-7a60-3547-e706-c8dab7e0a3d7",
+        "displayName": "appinsights-nodejs-pt",
+        "entityProperties": [
+          ...
+        ],
+        "powerState": "POWERED_ON",
+        ...
+      },
+      "hostedBySE": {
+        "entityType": "PHYSICAL_MACHINE",
+        "id": "34313836-3333-5553-4537-33394e43424e",
+        "displayName": "dc17-host-02.eng.vmturbo.com",
+        "commoditiesSold": [
+          ...
+        ],
+        "commoditiesBought": [
+          ...
+        ],
+        "entityProperties": [
+          ...
+        ],
+        "powerState": "POWERED_ON",
+        ...
+    }
+  ],
+  "actionOid": 636783681382171,
+  "explanation": "Resize down VMem for Virtual Machine appinsights-nodejs-pt from 2 GB to 1 GB",
+  "actionState": "PENDING_ACCEPT",
+  "createTime": 1616622476370
+}
+</pre>
+
+<p>Further, assume the physical machine details are already stored in the <code class="language-plaintext highlighter-rouge">cmdb_ci_esx_server</code> table, 
+and its ID is correctly set in the Correlation ID (<code class="language-plaintext highlighter-rouge">correlation_id</code>) column:</p>
+
+<p><img src="/assets/SNOW_CI_Matching_Correlation_ID.png" alt="CI Matching Custom Rule CI ID" /></p>
+
+<p>Given the above, the custom CI script should be similar to:</p>
+
+<pre>
+(function executeRule(current, previous /*null when async*/) {
+  if (current.action_dto) {
+    var actionDTO = current.getValue('action_dto');
+    var actionItemList = JSON.parse(actionDTO).actionItem;
+    if (actionItemList &amp;&amp; actionItemList.length &gt; 0) {
+      var actionItem = actionItemList[0];
+      var host = actionItem.hostedBySE;
+      if (host) {
+        var hostID = host.id;
+        var esxHost = new GlideRecordSecure('cmdb_ci_esx_server');
+        esxHost.addQuery('correlation_id', hostID);
+        esxHost.query();
+
+        if (esxHost.next()) {
+          var targetEntityID = current.getValue('target_entity_id');
+          if (targetEntityID) {
+            var turbonomicEntity = new       GlideRecordSecure('x_turbo_turbonomic_x_turbonomic_entity');
+            turbonomicEntity.addQuery('sys_id', targetEntityID);
+            turbonomicEntity.query();
+
+            if (turbonomicEntity.next()) {
+              turbonomicEntity.setValue('sn_entity_id', esxHost.sys_id);
+              turbonomicEntity.update();
+              gs.info("Successfully set the Related CI for the Turbonomic Entity");
+            }
+          } else {
+            gs.warn("The target entity is invalid for the action approval");
+          }
+
+          var changeRequestID = current.getValue('change_request_id');
+          if (changeRequestID) {
+            var changeRequest = new GlideRecordSecure('change_request');
+            changeRequest.addQuery('sys_id', changeRequestID);
+            changeRequest.query();
+
+            if (changeRequest.next()) {
+              changeRequest.setValue("cmdb_ci", esxHost.sys_id);
+              changeRequest.update();
+              gs.info("Successfully set the CI for the change request: " + changeRequest.getValue('number'));
+            }
+          } else {
+            gs.warn("No valid CR has been found for the action approval");
+          }				
+        } else {
+          gs.warn("Cannot find the ESX host in the cmdb_ci_esx_server table");
+        }
+      } else {
+        gs.warn("The Host element is missing in the Action DTO");
+      }
+    } else {
+      gs.warn("The Action Item list is missing or empty, in the Action DTO");
+    }
+  } else {
+    gs.warn("The Action DTO is invalid for the Turbonomic action");
+  }
+})(current, previous);
+</pre>
+
+<p>In addition to setting a custom CI for the Turbonomic action, the business rule 
+also updates the configuration item reference for the matching change request that was created for that 
+particular action approval.</p>
+
+
+          
+        </article>
+      </div>
+      </section>
+      
+      <div id="navList">
+        
+        <span>
+          <div id="toc">
+            
+            <article class="navList" style="top:10px;">
+              <div id="tocresult" tabIdex="-1" >
+                <ul>
+                  
+                  
+                  <h5><a href="http://localhost:4000/index.html">DOCUMENTATION HOME</a></h5>
+                  
+                  
+                  <h5 style="margin-bottom:1px;">Turbonomic Actions Technical Details</h5>
+                    <ul>
+                    
+                        
+                        <li><a href="http://localhost:4000/page/TechDetails/overview.html">Overview</a></li>
+                        
+                        <ul>
+                          
+                          
+                          
+                        </ul>
+                    
+                        
+                        <li><a href="http://localhost:4000/page/TechDetails/collaboration_diagram.html">Collaboration Diagram</a></li>
+                        
+                        <ul>
+                          
+                          
+                          
+                        </ul>
+                    
+                        
+                        <li><a href="http://localhost:4000/page/TechDetails/REST_API.html">REST API</a></li>
+                        
+                        <ul>
+                          
+                          
+                          
+                        </ul>
+                    
+                        
+                        <li><a href="http://localhost:4000/page/TechDetails/States_and_Transitions.html">Action Approval States and Transitions</a></li>
+                        
+                        <ul>
+                          
+                          
+                          
+                        </ul>
+                    
+                        
+                        <li><a href="http://localhost:4000/page/TechDetails/Scripts_and_Model.html">Server Scripts and Data Model</a></li>
+                        
+                        <ul>
+                          
+                          
+                          
+                        </ul>
+                    
+                        
+                        <li><a href="http://localhost:4000/page/TechDetails/Custom_CI_Matching.html">APPENDIX Implementing Custom CI Matching</a></li>
+                        
+                        <ul>
+                          
+                          
+                          
+                        </ul>
+                    
+                    </ul>
+                  
+                </ul>
+              </div>
+            </article>
+          </div>
+        </span>
+      </div>
+    </div>
+    
+  </body>
+  
+</html>

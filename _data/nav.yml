@@ -20,3 +20,7 @@ toc:
     - page: Server Scripts and Data Model
       url: Scripts_and_Model.html
       dir: page/TechDetails/Scripts_and_Model.html
+
+    - page: APPENDIX Implementing Custom CI Matching
+      url: Custom_CI_Matching.html
+      dir: page/TechDetails/Custom_CI_Matching.html
