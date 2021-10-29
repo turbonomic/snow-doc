@@ -28,6 +28,18 @@ toc:
     - page: Custom Business Rules
       url: Custom_Business_Rules.html
       dir: page/TechDetails/Custom_Business_Rules.html
+      subSubItems: # So far, you can nest two levels down for topic links
+      - page: EXAMPLE Create CR
+        url: Custom_Rule_CreateCR.html
+        dir: page/TechDetails/Custom_Rule_CreateCR.html
+        
+      - page: EXAMPLE Update Action Approval State
+        url: Custom_Rule_UpdateState.html
+        dir: page/TechDetails/Custom_Rule_UpdateState.html
+        
+      - page: EXAMPLE Close CR
+        url: Custom_Rule_CloseCR.html
+        dir: page/TechDetails/Custom_Rule_CloseCR.html
 
     - page: APPENDIX Implementing Custom CI Matching
       url: Custom_CI_Matching.html
