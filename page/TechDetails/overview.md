@@ -20,6 +20,9 @@ ServiceNow Paris, Quebec, and Rome environments.
 ---
 NOTE:  An important use case for this integration is the implementation of 
 custom business rules to create Change Requests (CRs) and to update action approval 
-states. For more informationm see <b>XREF GOES HERE!!!</b>
+states. For more informationm see see 
+[Custom Business Rules](/page/TechDetails/Custom_Business_Rules.html).
+
+
 
 ---
