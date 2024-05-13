@@ -3,14 +3,11 @@ layout: default
 title: Turbonomic Actions
 ---
 
-<p>This document describes technical details about {{ site.data.vars.Product_Short }} Actions, the 
-{{ site.data.vars.Product_Short }} integration with ServiceNow. </p>
+<p>Turbonomic Actions is an integration that brings the power of Turbonomic to your ServiceNow® Change Management application. You can use Turbonomic Actions to track the actions that Turbonomic recommends, or to create new Change Requests (CRs) in your ServiceNow instance.</p>
 
-<p>To see the user documentation for the {{ site.data.vars.Product_Short }} Actions application, 
-click 
-<a href="http://docs.turbonomic.com/docApp/doc/index.html?config=SvcNow_1_1"
-target="blank">HERE</a>.</p>
+<p>For official product documentation, see
+<a href="https://www.ibm.com/docs/en/tafs/1.1"
+target="blank">Turbonomic Actions for ServiceNow Actions</a>.</p>
 
-<p>For general information information about {{ site.data.vars.Product_Short }}, 
-see the full {{ site.data.vars.Product_Short }} documentation 
-<a href="https://docs.turbonomic.com/" target="blank">HERE</a>.</p>
+<p>For general information about Turbonomic, see
+<a href="https://www.ibm.com/docs/en/tarm" target="blank">IBM Turbonomic Application Resource Management documentation.</a>.</p>
